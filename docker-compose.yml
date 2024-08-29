@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: maina
+      POSTGRES_PASSWORD: maina1234
+
+  web:
+    build: .
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: maina
+      POSTGRES_PASSWORD: maina1234
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
