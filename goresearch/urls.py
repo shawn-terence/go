@@ -23,4 +23,9 @@ urlpatterns = [
     path('experts/', include('experts.urls')),
     path('payments/', include('payments.urls')),
     path('notifications/', include('notifications.urls')),
-    path('partnership/', include('partnership.urls'))
+    path('partnerships/', include('partnerships.urls'))
+    path('ratings/', include('ratings.urls'))
+    path('funding_recommendations/', include('funding_recommendations.urls'))
+     path('webinars/', include('webinars.urls'))
+    
+
