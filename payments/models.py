@@ -19,6 +19,7 @@ class Payment(models.Model):
         abstract = True
 
 class MpesaPayment(Payment):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='mpesa_payments')
     mpesa_transaction_id = models.CharField(max_length=100, unique=True)
     phone_number = models.CharField(max_length=15)
 
@@ -26,6 +27,7 @@ class MpesaPayment(Payment):
         return f"MPESA Payment - {self.mpesa_transaction_id}"
 
 class PaypalPayment(Payment):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='paypal_payments')
     paypal_transaction_id = models.CharField(max_length=100, unique=True)
     paypal_email = models.EmailField()
 
@@ -33,6 +35,7 @@ class PaypalPayment(Payment):
         return f"PayPal Payment - {self.paypal_transaction_id}"
 
 class BankPayment(Payment):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bank_payments')
     bank_transaction_id = models.CharField(max_length=100, unique=True)
     bank_name = models.CharField(max_length=100)
     account_number = models.CharField(max_length=50)

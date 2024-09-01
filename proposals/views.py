@@ -26,7 +26,7 @@ class ProposalDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return ProjectProposal.objects.filter(client=self.request.user)
 
-class TemplateListView(generics.ListAPIView)
+class TemplateListView(generics.ListAPIView):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
     permission_classes = [IsAuthenticated]

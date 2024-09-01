@@ -1,10 +1,10 @@
 from django.contrib import admin
 from .models import MpesaPayment, PaypalPayment, BankPayment, Invoice
 
-admin.site.register(MpesaPayment)
-admin.site.register(PaypalPayment)
-admin.site.register(BankPayment)
-admin.site.register(Invoice)
+# admin.site.register(MpesaPayment)
+# admin.site.register(PaypalPayment)
+# admin.site.register(BankPayment)
+# admin.site.register(Invoice)
 
 @admin.register(MpesaPayment)
 class MpesaPaymentAdmin(admin.ModelAdmin):
