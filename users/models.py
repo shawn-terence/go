@@ -9,34 +9,34 @@ class User(AbstractUser):
         ('expert', 'Expert'),
         ('retired_expert', 'Retired Expert'),
     ]
-    
+
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
+    # Adding unique related_name to avoid clashes
     groups = models.ManyToManyField(
         'auth.Group',
-        related_name='custom_user_set',
+        related_name='custom_user_groups',
         blank=True,
         help_text='The group this user belongs to.',
         verbose_name='groups',
-
     )
-
 
     user_permissions = models.ManyToManyField(
         'auth.Permission',
-        related_name='custom_user_set',
+        related_name='custom_user_permissions',
         blank=True,
         help_text='Specific permissions for this user.',
         verbose_name='user permissions',
     )
-    
+
     def is_expert(self):
         return self.role in ['expert', 'retired_expert']
-    
+
     def __str__(self):
         return self.username
 
 
+# Profile model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
@@ -50,6 +50,7 @@ class Profile(models.Model):
         return f'{self.user.username} Profile'
 
 
+# Organization model
 class Organization(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     organization_name = models.CharField(max_length=255)

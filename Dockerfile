@@ -4,12 +4,20 @@ FROM python:3.10-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Install gcc and other necessary build dependencies
+# Install gcc, libcups2-dev, and other necessary build dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     libc-dev \
     build-essential \
-    && rm -rf /var/lib/apt/lists/*
+    pkg-config \
+    libcairo2-dev \
+    python3-dev \
+    libgirepository1.0-dev \
+    libsystemd-dev \
+    libcups2-dev \
+    libdbus-1-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 # Install Python dependencies
 COPY requirements.txt /app/
