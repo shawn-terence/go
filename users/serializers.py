@@ -2,32 +2,23 @@ from rest_framework import serializers
 from .models import User, Profile, Organization
 from rest_framework.validators import ValidationError
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
 
-class SignUpSerializer(serializers.ModelSerializer):
-    email = serializers.CharField(max_length=80)
-    username = serializers.CharField(max_length=45)
-    password = serializers.CharField(min_length=8, write_only=True)
-    role = serializers.ChoiceField(choices=User.ROLE_CHOICES)
-
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["email", "username", "password", "role"]
-
-    def validate(self, attrs):
-        email_exists = User.objects.filter(email=attrs["email"]).exists()
-        if email_exists:
-            raise ValidationError("Email has already been used")
-        return super().validate(attrs)
+        fields = [
+            "id",
+            "username",
+            "role",
+            "email",
+            "password",
+        ]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        password = validated_data.pop("password")
-        user = super().create(validated_data)
-        user.set_password(password)
-        user.save()
-        Token.objects.create(user=user)
+        user = User.objects.create_user(**validated_data)
         return user
-
-
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile

@@ -7,13 +7,13 @@ from rest_framework.views import APIView
 
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Profile, Organization
-from .serializers import SignUpSerializer, ProfileSerializer, OrganizationSerializer
+from .serializers import UserSerializer, ProfileSerializer, OrganizationSerializer
 from .tokens import create_jwt_pair_for_user
 from .permissions import IsProfileOwnerOrAdmin, IsAdmin
 
 # Sign-up view
 class SignUpView(generics.GenericAPIView):
-    serializer_class = SignUpSerializer
+    serializer_class = UserSerializer
     permission_classes = []
 
     def post(self, request: Request):
@@ -21,34 +21,42 @@ class SignUpView(generics.GenericAPIView):
         serializer = self.serializer_class(data=data)
 
         if serializer.is_valid():
-            serializer.save()
-            response = {"message": "User Created Successfully", "data": serializer.data}
+            serializer.save() 
+            response = {
+                "message": "User Created Successfully",
+                "data": serializer.data
+            }
             return Response(data=response, status=status.HTTP_201_CREATED)
 
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 # Login view (JWT Authentication)
 class LoginView(APIView):
-    permission_classes = []
+    permission_classes = []  
 
     def post(self, request: Request):
         email = request.data.get("email")
         password = request.data.get("password")
 
-        user = authenticate(email=email, password=password)
+        if not email or not password:
+            return Response(
+                data={"message": "Email and password are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
+        user = authenticate(email=email, password=password)
         if user is not None:
             tokens = create_jwt_pair_for_user(user)
             response = {"message": "Login Successful", "tokens": tokens}
             return Response(data=response, status=status.HTTP_200_OK)
         else:
-            return Response(data={"message": "Invalid email or password"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                data={"message": "Invalid email or password"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
     def get(self, request: Request):
         content = {"user": str(request.user), "auth": str(request.auth)}
         return Response(data=content, status=status.HTTP_200_OK)
-
 
 # Profile view
 class ProfileViewSet(generics.RetrieveUpdateAPIView):
